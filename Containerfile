@@ -1,6 +1,6 @@
 FROM scratch AS ctx
 
-COPY build.sh /build.sh
+COPY build-files /
 COPY files /files
 COPY cosign.pub /files/usr/lib/pki/containers/carinata.pub
 
