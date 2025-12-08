@@ -1,6 +1,6 @@
 FROM scratch AS ctx
 
-COPY build.sh /build.sh
+COPY build-files /
 
 FROM quay.io/fedora/fedora-bootc:latest
 
