@@ -43,7 +43,7 @@ jobs:
           TS_OAUTH_CLIENT_SECRET: "op://perchnet/tailscale-oauth-github-runner/credential"
 
       - name: Inject API credentials into configuration
-        run: op inject -i secrets.op.tfvars -o secrets.auto.tfvars
+        run: op inject -i tf/secrets.op.tfvars -o tf/secrets.auto.tfvars
         env:
           OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
 
@@ -62,8 +62,8 @@ jobs:
         with:
           digger-spec: ${{ inputs.spec }}
           setup-aws: false
-          setup-opentofu: true
-          #terraform-version: 1.13.2
+          setup-terraform: true
+          terraform-version: 1.13.2
         env:
           GITHUB_CONTEXT: ${{ toJson(github) }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
