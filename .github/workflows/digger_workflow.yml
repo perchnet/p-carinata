@@ -61,6 +61,11 @@ jobs:
           oauth-secret: ${{ steps.load-secrets.outputs.TS_OAUTH_CLIENT_SECRET }}
           tags: tag:github-runner
           ping: pve1.shark-perch.ts.net
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: v1.5.7
+          cli_config_credentials_hostname: "${{ steps.load-secrets.outputs.TFE_HOSTNAME }}"
+          cli_config_credentials_token: "${{ steps.load-secrets.outputs.TFE_TOKEN }}"
 
       ###
       - name: ${{ fromJSON(github.event.inputs.spec).job_id }}
@@ -71,10 +76,6 @@ jobs:
           digger-spec: ${{ inputs.spec }}
           digger-token: "${{ steps.load-secrets.outputs.TFE_TOKEN }}"
           configure-checkout: false
-
-          
-
-          #terraform-version: 1.13.2
         env:
           GITHUB_CONTEXT: ${{ toJson(github) }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
