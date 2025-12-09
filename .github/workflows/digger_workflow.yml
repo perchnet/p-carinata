@@ -44,6 +44,12 @@ jobs:
           TFE_TOKEN: "op://perchnet/otaco/credential"
           TFE_HOSTNAME: "op://perchnet/otaco/hostname"
 
+      - uses: opentofu/setup-opentofu@v1
+        with:
+          cli_config_credentials_hostname: "${{ steps.load-secrets.outputs.TFE_HOSTNAME }}"
+          cli_config_credentials_token: "${{ steps.load-secrets.outputs.TFE_TOKEN }}"
+          tofu_wrapper: false
+          
       - name: Inject API credentials into configuration
         run: op inject -i tf/secrets.op.tfvars -o tf/secrets.auto.tfvars
         env:
@@ -63,9 +69,8 @@ jobs:
       - uses: diggerhq/digger@vLatest
         with:
           digger-spec: ${{ inputs.spec }}
-          setup-opentofu: true
-          opentofu-tfe-token: "${{ steps.load-secrets.outputs.TFE_TOKEN }}"
-          opentofu-tfe-hostname: "${{ steps.load-secrets.outputs.TFE_HOSTNAME }}"
+          
+
           #terraform-version: 1.13.2
         env:
           GITHUB_CONTEXT: ${{ toJson(github) }}
