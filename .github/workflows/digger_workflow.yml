@@ -43,13 +43,12 @@ jobs:
           TS_OAUTH_CLIENT_SECRET: "op://perchnet/tailscale-oauth-github-runner/credential"
           TFE_TOKEN: "op://perchnet/otaco/credential"
           TFE_HOSTNAME: "op://perchnet/otaco/hostname"
-
-      - uses: opentofu/setup-opentofu@v1
+            
+      - uses: hashicorp/setup-terraform@v3
         with:
           cli_config_credentials_hostname: "${{ steps.load-secrets.outputs.TFE_HOSTNAME }}"
           cli_config_credentials_token: "${{ steps.load-secrets.outputs.TFE_TOKEN }}"
-          tofu_wrapper: false
-          
+
       - name: Inject API credentials into configuration
         run: op inject -i tf/secrets.op.tfvars -o tf/secrets.auto.tfvars
         env:
