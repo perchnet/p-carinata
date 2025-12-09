@@ -44,10 +44,10 @@ jobs:
           TFE_TOKEN: "op://perchnet/otaco/credential"
           TFE_HOSTNAME: "op://perchnet/otaco/hostname"
             
-      - uses: hashicorp/setup-terraform@v3
-        with:
-          cli_config_credentials_hostname: "${{ steps.load-secrets.outputs.TFE_HOSTNAME }}"
-          cli_config_credentials_token: "${{ steps.load-secrets.outputs.TFE_TOKEN }}"
+      #- uses: hashicorp/setup-terraform@v3
+      #  with:
+      #    cli_config_credentials_hostname: "${{ steps.load-secrets.outputs.TFE_HOSTNAME }}"
+      #    cli_config_credentials_token: "${{ steps.load-secrets.outputs.TFE_TOKEN }}"
 
       - name: Inject API credentials into configuration
         run: op inject -i tf/secrets.op.tfvars -o tf/secrets.auto.tfvars
@@ -67,7 +67,11 @@ jobs:
         run: echo "job id ${{ fromJSON(github.event.inputs.spec).job_id }}"
       - uses: diggerhq/digger@vLatest
         with:
+          setup-terraform: true
           digger-spec: ${{ inputs.spec }}
+          digger-token: "${{ steps.load-secrets.outputs.TFE_TOKEN }}"
+          configure-checkout: false
+
           
 
           #terraform-version: 1.13.2
