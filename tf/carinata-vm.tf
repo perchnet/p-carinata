@@ -3,9 +3,9 @@ resource "proxmox_virtual_environment_vm" "carinata_vm" {
     vm_id = proxmox_virtual_environment_vm.carinata_template.id
     full  = var.vm_clone_full
   }
-  name      = var.vm_name
+  name        = var.vm_name
   description = var.vm_description
-  node_name = var.node_name
+  node_name   = var.node_name
 
   agent {
     enabled = var.vm_qemu_agent_enabled
@@ -30,6 +30,9 @@ resource "proxmox_virtual_environment_vm" "carinata_vm" {
         address = var.vm_ipv4_address
         gateway = var.vm_ipv4_gateway
       }
+    }
+    dns {
+      servers = ["4.2.2.1", "4.2.2.2", "4.2.2.3", "4.2.2.4"]
     }
     # attached disks from data_vm
   }
