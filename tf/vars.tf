@@ -188,3 +188,9 @@ variable "vm_ipv4_gateway" {
   type        = string
   default     = null
 }
+
+variable "canary" {
+  description = "Not used for anything, but changing this value replaces the image and VM."
+  type        = string
+  default     = "v1"
+}
