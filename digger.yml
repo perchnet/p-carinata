@@ -1,6 +1,6 @@
 projects:
   - name: p-carinata-ci
     dir: ./tf
-    workspace: p-carinata
+    workspace: 0bc75457-0404-4b57-813c-4398223fd627
 # auto_merge: true
 # auto_merge_strategy: "squash"
