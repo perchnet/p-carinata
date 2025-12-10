@@ -1,4 +1,30 @@
+resource "terraform_data" "initialization_map" {
+  input = {
+    datastore_id = var.cloudinit_datastore != null ? var.cloudinit_datastore : var.datastore
+    user_account = {
+      keys     = var.ssh_public_keys
+      username = var.vm_username
+      password = sensitive(var.vm_password)
+    }
+    ip_config = {
+      ipv4 = {
+        address = var.vm_ipv4_address
+        gateway = var.vm_ipv4_gateway
+      }
+    }
+    dns = {
+      servers = ["4.2.2.1", "4.2.2.2", "4.2.2.3", "4.2.2.4"]
+    }
+
+  }
+}
 resource "proxmox_virtual_environment_vm" "carinata_vm" {
+  lifecycle {
+    replace_triggered_by = [
+      terraform_data.initialization_map,
+      proxmox_virtual_environment_download_file.carinata_cloud_image
+    ]
+  }
   clone {
     vm_id = proxmox_virtual_environment_vm.carinata_template.id
     full  = var.vm_clone_full
@@ -19,23 +45,21 @@ resource "proxmox_virtual_environment_vm" "carinata_vm" {
     model  = "virtio"
   }
   initialization {
-    datastore_id = var.cloudinit_datastore != null ? var.cloudinit_datastore : var.datastore
+    datastore_id = resource.terraform_data.initialization_map.output.datastore_id
     user_account {
-      keys     = var.ssh_public_keys
-      username = var.vm_username
-      password = var.vm_password
+      keys     = resource.terraform_data.initialization_map.output.user_account.keys
+      username = resource.terraform_data.initialization_map.output.user_account.username
+      password = resource.terraform_data.initialization_map.output.user_account.password
     }
     ip_config {
       ipv4 {
-        address = var.vm_ipv4_address
-        gateway = var.vm_ipv4_gateway
+        address = resource.terraform_data.initialization_map.output.ip_config.ipv4.address
+        gateway = resource.terraform_data.initialization_map.output.ip_config.ipv4.gateway
       }
     }
-    dns {
-      servers = ["4.2.2.1", "4.2.2.2", "4.2.2.3", "4.2.2.4"]
-    }
-    # attached disks from data_vm
+    dns { servers = resource.terraform_data.initialization_map.output.dns.servers }
   }
+  # attached disks from data_vm
   dynamic "disk" {
     for_each = { for idx, val in proxmox_virtual_environment_vm.data_vm.disk : idx => val }
     iterator = data_disk
